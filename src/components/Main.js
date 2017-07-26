@@ -2,100 +2,82 @@ import 'normalize.css/normalize.css';
 import 'styles/App.scss';
 
 import React from 'react';
+import ReactDOM from 'react-dom';
 
+//传入navbar\content中的数据
 let liItemDatas = require('../data/liItemDatas.json');
+let contentDatas = require('../data/contentDatas.json');
 
 //nav中的li组件
-class NavItem extends React.Component{
+class NavClass extends React.Component{
 	constructor(props){
 		super(props);
-		this.handleClick = this.handleClick.bind(this);
-
 	}
 
-	static defaultProps = {
-
-	};
-
-	点击某个item
-	handleClick(e){
-		//active该item
-		
-		this.props.itemActive();
-
-		e.stopPropagation();
-		e.preventDefault();
-	}
+	static defaultProps = {};
 
 	render(){
-		let aClassName = (this.props.isactive.isActive) ? 'is-active' : 'is-noactive';
-
 		return (
-			<div>
-				<li><a className={aClassName} onClick={this.handleClick}>{this.props.data.content}</a></li>
-			</div>
+			<ul>
+				{
+					liItemDatas.map( (value, index) => {
+						return (
+							<li><a key={index} onClick={this.props.clk.bind(this, index)} className={this.props.activeindex === index ? 'is-active' : ''}>{value.name}</a></li>
+						);
+					})
+				}
+			</ul>
 		);
 	}
 }
 
-export default class AppComponent extends React.Component {
+class ContentClass extends React.Component{
+	constructor(props){
+		super(props);
+	}
+	static defaultProps = {};
+
+	render(){
+		return (
+			<h2>{contentDatas[this.props.activeindex].content}</h2>
+		);
+		
+	}
+}
+
+
+export default class TabComponent extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			navItemStateArr: [
-				// {
-				// 		isActive: false
-				// }
-			]
+			activeIndex: 0     //父组件管理点击item的索引
 		};
 
+		this.handleClick = this.handleClick.bind(this);
 	}
 
 	static defaultProps = {
 
 	};
 	
+	handleClick(index){
+		this.setState({
+			activeIndex: index
+		});
+	}
 
 	render() {
-		let navItems = [];
-		let navItemStateArr = this.state.navItemStateArr;
-
-		liItemDatas.forEach( function(value, index){
-			//初始化isActive
-			if(!navItemStateArr[index]){
-				navItemStateArr[index] = {
-					isActive: false
-				};
-			}
-
-			navItems.push(<NavItem key={index} data={value} isactive={navItemStateArr[index]} itemActive={this.itemActive(index)}/>);
-		}.bind(this));
-
 	    return (
 	    	<div className="main">
 	    		<div className="main-nav">
-	    			<ul>
-		    			{navItems}
-	    			</ul>
+	    			<NavClass clk={this.handleClick} activeindex={this.state.activeIndex}/>
 	    		</div>
 	    		
 	    		<div className="main-content">
-	    			<p>hihi<br/>hihih</p>
+	    			<ContentClass activeindex={this.state.activeIndex}/>
 	    		</div>
 	    	</div>
 	    );
   	}
-
-  	itemActive(index){
-  		return function(){
-			let navItemStateArr = this.state.navItemStateArr;
-
-			navItemStateArr[index].isActive = true;
-  			this.setState({
-  				navItemStateArr: navItemStateArr
-  			});
-  		}.bind(this);
-  	}
-
 }
-
+ReactDOM.render(<TabComponent/>, document.getElementById('app'));

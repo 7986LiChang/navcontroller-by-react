@@ -55,10 +55,6 @@ html, body {
         border-bottom: 1px solid #5fd8ca;
         color: #000;
       }
-      &.is-noactive{
-        border-bottom: none;
-        color: #666;
-      }
     }
 
   }
@@ -72,6 +68,10 @@ html, body {
   // margin-top: 53px;
   margin : 0 auto;
   margin-top: 53px;
+
+  .is-hide{
+    display: none;
+  }
 }
 
 
